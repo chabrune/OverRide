@@ -31,7 +31,7 @@ int store_number(unsigned int *data) {
 
     printf(" Number: ");
     number = get_unum();
-
+    
     printf(" Index: ");
     index = get_unum();
 
