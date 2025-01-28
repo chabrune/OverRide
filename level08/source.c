@@ -22,7 +22,6 @@ int main(int argc, char **argv) {
 
     // if (argc != 2) {
     //     printf("Usage: %s filename\n", argv[0]);
-    //     return 1;
     // }
 
     log_file = fopen("./backups/.log", "a");
@@ -47,7 +46,8 @@ int main(int argc, char **argv) {
         exit(1);
     }
 
-    while ((buffer[0] = fgetc(source_file)) != EOF) {
+    while ((buffer[0] = fgetc(source_file)) != EOF)
+    {
         write(dest_fd, buffer, 1);
     }
 
@@ -59,3 +59,8 @@ int main(int argc, char **argv) {
 
     return 0;
 }
+// argv1 = .pass du level09  
+
+// backups = ou est ecrit le contenu de argv1
+
+// /tmp/link

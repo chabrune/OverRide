@@ -1,0 +1,30 @@
+RELRO           STACK CANARY      NX            PIE             RPATH      RUNPATH      FILE
+Partial RELRO   No canary found   NX enabled    PIE enabled     No RPATH   No RUNPATH   /home/users/level09/level09
+
+
+(gdb) p secret_backdoor 
+$1 = {<text variable, no debug info>} 0x55555555488c <secret_backdoor>
+
+in main; saved rip 0x7ffff7a3d7ed
+
+in handle_msg; saved rip 0x555555554abd
+
+b *handle_msg+112
+
+(gdb) x/64wx $rsp
+0x7fffffffe3e0: 0x65413265      0x34654133      0x41356541      0x65413665
+0x7fffffffe3f0: 0x38654137      0x41396541      0x66413066      0x32664131
+0x7fffffffe400: 0x41336641      0x66413466      0x36664135      0x41376641
+0x7fffffffe410: 0x66413866      0x30674139      0x41316741      0x67413267
+0x7fffffffe420: 0x34674133      0x41356741      0x67413667      0x38674137
+0x7fffffffe430: 0x41396741      0x68413068      0x32684131      0x41336841
+0x7fffffffe440: 0x00003468      0x00000000      0x55554c10      0x00005555
+0x7fffffffe450: 0xffffe590      0x00007fff      0xf7a95d45      0x00007fff
+0x7fffffffe460: 0xf7dd4260      0x00007fff      0xf7a9608f      0x41306141
+0x7fffffffe470: 0x61413161      0x33614132      0x41346141      0x61413561
+0x7fffffffe480: 0x37614136      0x41386141      0x62413961      0x31624130
+0x7fffffffe490: 0x41326241      0x00000062      0xffffe4b0      0x00007fff
+0x7fffffffe4a0: 0xffffe4b0      0x00007fff      0x55554abd      0x00005555
+0x7fffffffe4b0: 0x00000000      0x00000000      0xf7a3d7ed      0x00007fff
+0x7fffffffe4c0: 0x00000000      0x00000000      0xffffe598      0x00007fff
+0x7fffffffe4d0: 0x55554000      0x00000001      0x55554aa8      0x00005555
