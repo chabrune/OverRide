@@ -1,73 +1,59 @@
 #include <stdio.h>
 #include <string.h>
 
+#define MAX_MSG_SIZE 0x400
+#define MAX_USERNAME_SIZE 0x80
+
+typedef struct {
+    char username[0x8c];  // 140 bytes
+    char msg[MAX_MSG_SIZE];
+} user_data;
+
 void secret_backdoor() {
-    char buffer[128];
-
-    fgets(buffer, 128, stdin);
-
+    char buffer[0x80];
+    fgets(buffer, sizeof(buffer), stdin);
     system(buffer);
 }
 
-void handle_msg() {
-    char buffer[192];
-
-    // Initialiser une partie du buffer à 0 ?
-    memset(buffer + 140, 0, 40);
-
-    // Appeler set_username pour remplir une partie du buffer
-    set_username(buffer);
-
-    // Appeler set_msg pour remplir une autre partie du buffer
-    set_msg(buffer);
-
-    puts(">: Msg sent!");
-
-    return;
-}
-
-void set_msg(char *buffer) {
-    char input[1024];
-
-    memset(input, 0, 1024);
-
-    puts(">: Msg @Unix-Dude");
-    printf(">>: ");
-
-    // (vulnérabilité : débordement possible si l'entrée dépasse 1024 octets)
-    fgets(input, 1024, stdin);
-
-    // Copier l'entrée utilisateur dans le buffer principal (vulnérabilité : strncpy ne garantit pas la null-termination)
-    strncpy(buffer + 140, input, *(int *)(buffer + 136)); // Utilise une valeur du buffer pour déterminer la longueur de copie
-
-    return;
-}
-
-void set_username(char *buffer) {
-    char username[128];
-
-    memset(username, 0, 128);
+void set_username(user_data *data) {
+    char username[MAX_USERNAME_SIZE];
+    memset(username, 0, sizeof(username));
 
     puts(">: Enter your username");
     printf(">>: ");
+    fgets(username, sizeof(username), stdin); // 140
 
-    // (vulnérabilité : débordement possible si l'entrée dépasse 128 octets)
-    fgets(username, 128, stdin);
-
-    // (vulnérabilité : copie jusqu'à 40 octets sans vérification)
-    for (int i = 0; i < 40; i++) {
-        buffer[140 + i] = username[i];
-        if (username[i] == '\0') break; // Arrêter si on rencontre un null byte
+    for (int i = 0; i < 0x28; i++) {
+        if (username[i] == '\0') break;
+        data->username[i] = username[i];
     }
 
-    printf(">: Welcome, %s", buffer + 140);
-    return;
+    printf(">: Welcome, %s", data->username);
 }
 
-int main() {
+void set_msg(user_data *data) {
+    char msg[MAX_MSG_SIZE];
+    memset(msg, 0, sizeof(msg));
+
+    puts(">: Msg @Unix-Dude");
+    printf(">>: ");
+    fgets(msg, sizeof(msg), stdin);
+
+    strncpy(data->msg, msg, MAX_MSG_SIZE);
+}
+
+void handle_msg() {
+    user_data data;
+    memset(&data, 0, sizeof(data));
+
+    set_username(&data);
+    set_msg(&data);
+
+    puts(">: Msg sent!");
+}
+
+int main(int argc, char **argv, char **envp) {
     puts("------------------------------------");
-
     handle_msg();
-
     return 0;
 }
